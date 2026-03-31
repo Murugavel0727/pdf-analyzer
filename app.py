@@ -9,15 +9,15 @@ import tempfile
 st.title("PDF Q&A to WhatsApp Sender")
 
 groq_key = st.text_input("Enter GROQ API Key", type="password")
-
-tw_sid =st.text_input("Twilio SID",type="password")
-tw_token =st.text_input("Twilio Token",type="password")
-number=st.text_input("Enter your WhatsApp number",placeholder="+91XXXXXXXXXX")
+check = st.checkbox("Send answer to WhatsApp")
+if check:
+    tw_sid =st.text_input("Twilio SID",type="password")
+    tw_token =st.text_input("Twilio Token",type="password")
+    number=st.text_input("Enter your WhatsApp number",placeholder="+91XXXXXXXXXX")
 uploaded_file =st.file_uploader("Upload PDF",type="pdf")
 question =st.text_input("Ask your question")
-
 if st.button("Submit"):
-    if uploaded_file and question and groq_key and tw_sid and tw_token:
+    if uploaded_file and question and groq_key and (not check or (tw_sid and tw_token and number)):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             tmp.write(uploaded_file.read())
             file_path =tmp.name
@@ -44,16 +44,17 @@ if st.button("Submit"):
         st.write("#### Source Page Numbers:")
         for node in response.source_nodes:
             st.write(f"Page: {node.node.metadata.get('page_label')}")
-        client = Client(tw_sid, tw_token)
-        try:
-            message = client.messages.create(
-                to=f'whatsapp:{number}',
-                from_='whatsapp:+14155238886',
-                # body=str(response)
-                body=response.response
-            )
-            st.success("Message sent to WhatsApp successfully!")
-        except Exception as e:
-            st.error(f"Error sending message: {e}")
+        if check:
+            client = Client(tw_sid, tw_token)
+            try:
+                message = client.messages.create(
+                    to=f'whatsapp:{number}',
+                    from_='whatsapp:+14155238886',
+                    # body=str(response)
+                    body=response.response
+                )
+                st.success("Message sent to WhatsApp successfully!")
+            except Exception as e:
+                st.error(f"Error sending message: {e}")
     else:
         st.warning("Please fill all fields!")
