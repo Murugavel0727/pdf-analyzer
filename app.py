@@ -38,13 +38,18 @@ if st.button("Submit"):
         query_engine =index.as_query_engine(llm=llm)
         response = query_engine.query(question)
         st.success("Answer Generated")
-        st.write(response)
+        # st.write(response)
+        st.write("### Answer:")
+        st.write(str(response))
+        for node in response.source_nodes:
+            st.write(f"Page: {node.node.metadata.get('page_label')}")
         client = Client(tw_sid, tw_token)
         try:
             message = client.messages.create(
                 to=f'whatsapp:{number}',
                 from_='whatsapp:+14155238886',
-                body=str(response)
+                # body=str(response)
+                body=response.response
             )
             st.success("Message sent to WhatsApp successfully!")
         except Exception as e:
