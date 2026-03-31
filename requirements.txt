@@ -1,5 +1,9 @@
 streamlit
-llama-index
+llama-index==0.10.0
+llama-index-llms-groq
 llama-index-embeddings-huggingface
 transformers
 torch
+twilio
+sentence-transformers
+pypdf
