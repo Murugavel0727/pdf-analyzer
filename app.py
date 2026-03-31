@@ -41,6 +41,7 @@ if st.button("Submit"):
         # st.write(response)
         st.write("### Answer:")
         st.write(str(response))
+        st.write("#### Source Page Numbers:")
         for node in response.source_nodes:
             st.write(f"Page: {node.node.metadata.get('page_label')}")
         client = Client(tw_sid, tw_token)
